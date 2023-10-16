@@ -1,7 +1,10 @@
-import { commands, ExtensionContext, workspace, window } from "vscode";
+import { commands, ExtensionContext, workspace, window, Uri } from "vscode";
+import { readdir } from "fs/promises";
 import { HelloWorldPanel } from "./panels/HelloWorldPanel";
 import { parseRC, printRC } from "./utilities/handleRcFile";
-import { initializeTesting } from "./test/test-panel";
+import { createTest, initializeTesting } from "./test/test-panel";
+import { workspacePath } from "./globals";
+import { Problem } from "./model";
 
 export async function activate(context: ExtensionContext) {
   // Create the show hello world command
@@ -12,8 +15,10 @@ export async function activate(context: ExtensionContext) {
     }
   );
 
+  workspacePath.value = workspace.workspaceFolders?.[0].uri.path!;
+
   const file = await workspace.openTextDocument(
-    workspace.workspaceFolders?.[0].uri.path + "/.kattisrc"
+    workspacePath.value + "/.kattisrc"
   );
 
   const text = file.getText();
@@ -25,6 +30,19 @@ export async function activate(context: ExtensionContext) {
   if (rc.kattis?.loginurl) console.log(rc.kattis.loginurl);
 
   context.subscriptions.push(...(await initializeTesting()));
+
+  const dir = await readdir(workspacePath.value, {
+    encoding: "utf-8",
+    withFileTypes: true,
+  });
+
+  for (const f of dir) {
+    if (f.name.startsWith(".") || !f.isDirectory()) continue;
+
+    const test = createTest(f.name);
+
+    const project = new Problem(f.name, test);
+  }
 
   const tree = window.createTreeView<string>("contest", {
     treeDataProvider: {
