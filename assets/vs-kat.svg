@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="64"
+   viewBox="0 0 16.933333 16.933333"
+   version="1.1"
+   id="svg1"
+   sodipodi:docname="vs-kat.svg"
+   inkscape:version="1.3 (0e150ed6c4, 2023-07-21)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#505050"
+     bordercolor="#ffffff"
+     borderopacity="1"
+     inkscape:showpageshadow="0"
+     inkscape:pageopacity="0"
+     inkscape:pagecheckerboard="1"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     inkscape:zoom="10.961055"
+     inkscape:cx="17.242866"
+     inkscape:cy="28.692494"
+     inkscape:window-width="1900"
+     inkscape:window-height="988"
+     inkscape:window-x="10"
+     inkscape:window-y="10"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs1" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g3"
+       transform="rotate(-45,3.8093126,-3.7188983)"
+       style="fill:#ffffff;fill-opacity:1">
+      <g
+         id="g2"
+         style="fill:#ffffff;fill-opacity:1">
+        <path
+           style="font-weight:600;font-size:14.1111px;line-height:1.25;font-family:'Iosevka SS08';-inkscape-font-specification:'Iosevka SS08 Semi-Bold';stroke-width:0.264583"
+           d="M 3.0328181,12.965562 8.225703,10.397341 V 8.8733425 L 3.0328181,6.2910111 2.3554853,7.5186769 6.6734819,9.6353419 2.3554853,11.737896 Z"
+           id="text1"
+           aria-label="&gt;" />
+      </g>
+    </g>
+    <g
+       id="g3-6"
+       transform="rotate(45,-2.4220224,11.458082)"
+       style="fill:#ffffff;fill-opacity:1">
+      <g
+         id="g2-4"
+         style="fill:#ffffff;fill-opacity:1">
+        <path
+           style="font-weight:600;font-size:14.1111px;line-height:1.25;font-family:'Iosevka SS08';-inkscape-font-specification:'Iosevka SS08 Semi-Bold';stroke-width:0.264583"
+           d="M -1.3367741,6.3702966 -0.65944131,5.1426309 -4.9633269,3.040077 -0.65944131,0.92341195 -1.3367741,-0.30425377 -6.529659,2.2780776 v 1.5239988 z"
+           id="text1-3"
+           aria-label="&lt;" />
+      </g>
+    </g>
+    <path
+       style="font-weight:600;font-size:11.2889px;line-height:1.25;font-family:'Iosevka SS08';-inkscape-font-specification:'Iosevka SS08 Semi-Bold';fill:#ffffff;stroke-width:0.264583"
+       d="m 4.4322255,12.345171 4.1543154,-2.05458 V 9.0713898 L 4.4322255,7.005521 3.8903583,7.9876554 7.3447618,9.6809904 3.8903583,11.363037 Z"
+       id="text2"
+       aria-label="&gt;" />
+    <path
+       d="M 6.9944287,14.484668 H 11.419678 V 13.389645 H 6.9944287 Z"
+       id="text3"
+       style="font-weight:600;font-size:11.2889px;line-height:1.25;font-family:'Iosevka SS08';-inkscape-font-specification:'Iosevka SS08 Semi-Bold';fill:#ffffff;stroke-width:0.264583"
+       aria-label="_" />
+  </g>
+</svg>

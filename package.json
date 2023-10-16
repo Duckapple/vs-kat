@@ -9,7 +9,9 @@
   "categories": [
     "Other"
   ],
-  "activationEvents": [],
+  "activationEvents": [
+    "workspaceContains:**/.kattisrc"
+  ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
@@ -17,7 +19,30 @@
         "command": "vs-kat.showHelloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "kattis-panel",
+          "title": "VS Kat",
+          "icon": "assets/vs-kat.svg"
+        }
+      ]
+    },
+    "views": {
+      "kattis-panel": [
+        {
+          "id": "problems",
+          "name": "Problems in progress",
+          "when": "vs-kat.has-problems"
+        },
+        {
+          "id": "contest",
+          "name": "Contest",
+          "when": "vs-kat.contest-mode"
+        }
+      ]
+    }
   },
   "scripts": {
     "install:all": "pnpm i && cd webview-ui && pnpm i",
@@ -31,15 +56,18 @@
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.83.0",
     "@types/mocha": "^10.0.2",
     "@types/node": "18.x",
+    "@types/vscode": "^1.83.0",
     "@typescript-eslint/eslint-plugin": "^6.7.3",
     "@typescript-eslint/parser": "^6.7.3",
+    "@vscode/test-electron": "^2.3.4",
     "eslint": "^8.50.0",
     "glob": "^10.3.3",
     "mocha": "^10.2.0",
-    "typescript": "^5.2.2",
-    "@vscode/test-electron": "^2.3.4"
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
   }
 }
