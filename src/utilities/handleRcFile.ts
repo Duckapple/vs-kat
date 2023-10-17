@@ -11,9 +11,12 @@ const rcKeys = [
   "contest",
 ] as const;
 
-export function parseRC(
-  input: string
-): Record<(typeof rcKeys)[number], Record<string, string> | undefined> {
+export type RC = Record<
+  (typeof rcKeys)[number],
+  Record<string, string> | undefined
+>;
+
+export function parseRC(input: string): RC {
   const result: Record<string, Record<string, string>> = {};
   let intermediary: Record<string, string> = result as any;
   for (const line of input.split(/\r?\n/)) {
@@ -38,12 +41,10 @@ export function parseRC(
     }
   }
 
-  return result;
+  return result as RC;
 }
 
-export function printRC(
-  input: Record<(typeof rcKeys)[number], Record<string, string> | undefined>
-): string {
+export function printRC(input: RC): string {
   const warning = `# This file includes a secret token that allows you to log in.
 # DO NOT SHARE IT WITH ANYONE ELSE.
 # If someone gets access to this token, please revoke it by changing your KATTIS password.

@@ -1,8 +1,12 @@
 import { TestRunProfileKind, tests, Uri, TestItem } from "vscode";
-import { readdir } from "fs/promises";
+import { readdir, readFile } from "fs/promises";
 import { existsSync } from "fs";
 import { workspacePath } from "../globals";
 import { SubTest, Test } from "../model";
+import { spawn } from "child_process";
+import { EQUAL } from "fast-diff";
+
+import diff = require("fast-diff");
 
 const testController = tests.createTestController(
   "vs-kat.tests",
@@ -81,9 +85,29 @@ export async function initializeTesting() {
         run.enqueued(item);
         await resolveHandler(item);
 
-        test?.subTests?.forEach((subTest) => {
+        test?.subTests?.forEach(async (subTest) => {
           run.enqueued(subTest.testItem);
-          setTimeout(() => run.passed(subTest.testItem), 500);
+          const inBuffer = await readFile(subTest.inFile.fsPath);
+          const testRun = spawn(
+            "python",
+            [`${workspacePath.value}/${item.id}/${item.id}.py`],
+            { stdio: "pipe" }
+          );
+          testRun.stdin.write(inBuffer);
+          const outPromise = readFile(subTest.outFile.fsPath);
+
+          let data = "";
+          testRun.stdout.on("data", (chunk) => (data += chunk));
+          testRun.on("close", async () => {
+            const outText = (await outPromise).toString();
+            const difference = diff(data, outText);
+            console.log(difference);
+            if (difference.length === 1 && difference[0][0] === EQUAL) {
+              run.passed(subTest.testItem);
+            } else {
+              run.failed(subTest.testItem, { message: "no matchy :(" });
+            }
+          });
         });
 
         setTimeout(() => {

@@ -1,3 +1,5 @@
+import { RC } from "./utilities/handleRcFile";
+
 class Reactive<T> {
   #value: T;
   constructor(def: T) {
@@ -12,3 +14,4 @@ class Reactive<T> {
 }
 
 export const workspacePath = new Reactive("");
+export const rc = new Reactive<RC | undefined>(undefined);

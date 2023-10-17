@@ -3,7 +3,7 @@ import { readdir } from "fs/promises";
 import { HelloWorldPanel } from "./panels/HelloWorldPanel";
 import { parseRC, printRC } from "./utilities/handleRcFile";
 import { createTest, initializeTesting } from "./test/test-panel";
-import { workspacePath } from "./globals";
+import { rc, workspacePath } from "./globals";
 import { Problem } from "./model";
 
 export async function activate(context: ExtensionContext) {
@@ -24,10 +24,10 @@ export async function activate(context: ExtensionContext) {
   const text = file.getText();
 
   console.log(text);
-  const rc = parseRC(text);
-  console.log(printRC(rc));
+  rc.value = parseRC(text);
+  console.log(printRC(rc.value));
 
-  if (rc.kattis?.loginurl) console.log(rc.kattis.loginurl);
+  if (rc.value.kattis?.loginurl) console.log(rc.value.kattis.loginurl);
 
   context.subscriptions.push(...(await initializeTesting()));
 
@@ -47,21 +47,25 @@ export async function activate(context: ExtensionContext) {
   const tree = window.createTreeView<string>("contest", {
     treeDataProvider: {
       getChildren(element) {
-        if (!rc.contest) return [];
+        if (!rc.value?.contest) return [];
         return element == null
-          ? Object.keys(rc.contest).filter((key) => key !== "contest")
+          ? Object.keys(rc.value?.contest).filter((key) => key !== "contest")
           : [];
       },
       getTreeItem(element) {
         return {
-          label: `${element}: ${rc.contest?.[element]}`,
+          label: `${element}: ${rc.value?.contest?.[element]}`,
         };
       },
     },
   });
 
   await commands.executeCommand("setContext", "vs-kat.has-problems", true);
-  await commands.executeCommand("setContext", "vs-kat.contest-mode", true);
+  await commands.executeCommand(
+    "setContext",
+    "vs-kat.contest-mode",
+    rc.value?.contest != null
+  );
 
   // Add command to the extension context
   context.subscriptions.push(showHelloWorldCommand, tree);
