@@ -1,10 +1,13 @@
-import { commands, ExtensionContext, workspace, window, Uri } from "vscode";
-import { readdir } from "fs/promises";
+import { ExtensionContext } from "vscode";
 import { HelloWorldPanel } from "./panels/HelloWorldPanel";
 import { parseRC, printRC } from "./utilities/handleRcFile";
 import { createTest, initializeTesting } from "./test/test-panel";
 import { rc, workspacePath } from "./globals";
 import { Problem } from "./model";
+import fs = require("fs/promises");
+import vscode = require("vscode");
+
+const { commands, workspace, window } = vscode;
 
 export async function activate(context: ExtensionContext) {
   // Create the show hello world command
@@ -31,7 +34,7 @@ export async function activate(context: ExtensionContext) {
 
   context.subscriptions.push(...(await initializeTesting()));
 
-  const dir = await readdir(workspacePath.value, {
+  const dir = await fs.readdir(workspacePath.value, {
     encoding: "utf-8",
     withFileTypes: true,
   });

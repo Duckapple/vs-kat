@@ -1,20 +1,18 @@
-import {
-  TestRunProfileKind,
-  tests,
-  Uri,
-  TestItem,
-  TestRunRequest,
-  CancellationToken,
-} from "vscode";
-import { readdir, readFile } from "fs/promises";
-import { existsSync } from "fs";
+import { TestItem, TestRunRequest, CancellationToken } from "vscode";
 import { workspacePath } from "../globals";
 import { SubTest, Test } from "../model";
-import { spawn } from "child_process";
-import { Diff, EQUAL } from "fast-diff";
+import childProcess = require("child_process");
+import { EQUAL } from "fast-diff";
+
+import { delayedPromise } from "../utilities/delayedPromise";
 
 import diff = require("fast-diff");
-import { delayedPromise } from "../utilities/delayedPromise";
+import vscode = require("vscode");
+const { TestRunProfileKind, tests, Uri } = vscode;
+import fs = require("fs");
+const { existsSync } = fs;
+import fsPromises = require("fs/promises");
+const { readdir, readFile } = fsPromises;
 
 const testController = tests.createTestController(
   "vs-kat.tests",
@@ -26,15 +24,16 @@ const testState = {
 };
 
 export function createTest(name: string): Test {
+  const file = `${workspacePath.value}/${name}/${name}.py`;
   const testDir = `${workspacePath.value}/${name}/test`;
 
-  const testItem = testController.createTestItem(name, name, Uri.file(testDir));
+  const testItem = testController.createTestItem(name, name, Uri.file(file));
 
   testItem.canResolveChildren = true;
 
   testController.items.add(testItem);
 
-  const test = { testItem };
+  const test = { testItem, testDir };
   testState.value.set(name, test);
   return test;
 }
@@ -56,7 +55,7 @@ async function resolveHandler(item?: TestItem) {
 
   const test = testState.value.get(item.id);
 
-  const testDir = item.uri?.fsPath;
+  const testDir = test?.testDir;
   if (!testDir || !test) return;
   item.busy = true;
   test.subTests = test.subTests ?? [];
@@ -98,6 +97,7 @@ async function runProfileHandler(
 ) {
   const run = testController.createTestRun(request);
   for (const item of request.include ?? []) {
+    item.children.forEach(console.log);
     const test = testState.value.get(item.id);
     run.enqueued(item);
     await resolveHandler(item);
@@ -107,18 +107,29 @@ async function runProfileHandler(
         const { promise, resolve, reject } = delayedPromise<true>();
         run.enqueued(subTest.testItem);
         const inBuffer = await readFile(subTest.inFile.fsPath);
-        const testRun = spawn(
+        const testRun = childProcess.spawn(
           "python",
           [`${workspacePath.value}/${item.id}/${item.id}.py`],
           { stdio: "pipe" }
         );
-        testRun.stdin.write(inBuffer);
+        testRun.stdin.write(inBuffer, () => {
+          testRun.stdin.end();
+        });
         const outPromise = readFile(subTest.outFile.fsPath);
 
         let data = "";
+        let error = "";
         testRun.stdout.on("data", (chunk) => (data += chunk));
+        testRun.stderr.on("data", (chunk) => (error += chunk));
         testRun.on("close", async () => {
           const outText = (await outPromise).toString();
+          if (error) {
+            run.failed(subTest.testItem, {
+              message: `An error occurred:\n${error}`,
+            });
+            reject(subTest.testItem.id);
+            return;
+          }
           const difference = diff(data, outText);
           if (difference.length === 1 && difference[0][0] === EQUAL) {
             run.passed(subTest.testItem);
@@ -126,8 +137,8 @@ async function runProfileHandler(
           } else {
             run.failed(subTest.testItem, {
               message: "Output mismatched",
-              expectedOutput: data,
-              actualOutput: outText,
+              actualOutput: data,
+              expectedOutput: outText,
             });
             reject(subTest.testItem.id);
           }
