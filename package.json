@@ -55,7 +55,7 @@
     "vscode:prepublish": "bun run build",
     "postprocess": "sed -e 's/import.meta.require/require/ ; s/export {/\nexports.activate = activate;\n{/' -i ./out/extension.js",
     "build": "tsc -p ./ && bun build ./src/extension.ts --outfile ./out/extension.js --target node --external vscode && bun run postprocess && bun run build:webview",
-    "watch": "tsc -watch -p ./",
+    "watch": "bun run build",
     "pretest": "bun run build && pnpm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"

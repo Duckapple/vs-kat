@@ -33,33 +33,39 @@ export const getProblemSub = vscode.commands.registerCommand(
     }
 
     fs.mkdirSync(problemDir);
-    fs.mkdirSync(testDir);
 
-    const zipResponse = await fetch(
-      baseProblemUrl + "/file/statement/samples.zip"
-    );
-    if (zipResponse.status !== 200) {
-      return vscode.window.showErrorMessage(
-        `Could not retrieve samples for '${problemName}'.`
-      );
-    }
-
-    const zipBuffer = Buffer.from(await zipResponse.arrayBuffer());
-    const unzip = await unzipper.Open.buffer(zipBuffer);
-    unzip.files.forEach(async (f) =>
-      fs.writeFileSync(testDir + "/" + f.path, await f.buffer())
-    );
+    const optError = await fetchSamples(problemName, testDir);
 
     fs.writeFileSync(
       `${problemDir}/${problemName}.py`,
       "first_line = input()\n"
     );
 
-    // TODO: Add boilerplate file
-
-    return vscode.window.showInformationMessage(`Retrieved ${problemName}`);
+    return vscode.window.showInformationMessage(
+      `Retrieved '${problemName}'${optError ?? ""}`,
+      {
+        detail: optError,
+      }
+    );
   }
 );
+
+async function fetchSamples(problemName: string, testDir: string) {
+  const zipResponse = await fetch(
+    getProblemUrl(problemName) + "/file/statement/samples.zip"
+  );
+  if (zipResponse.status !== 200) {
+    return `, but no samples were found`;
+  }
+
+  fs.mkdirSync(testDir);
+
+  const zipBuffer = Buffer.from(await zipResponse.arrayBuffer());
+  const unzip = await unzipper.Open.buffer(zipBuffer);
+  unzip.files.forEach(async (f) =>
+    fs.writeFileSync(`${testDir}/${f.path}`, await f.buffer())
+  );
+}
 
 async function problemExists(baseProblemUrl: string) {
   const res = await fetch(baseProblemUrl);
