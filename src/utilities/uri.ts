@@ -1,5 +1,6 @@
 import { Webview } from "vscode";
 import vscode = require("vscode");
+import { rc } from "../globals";
 
 /**
  * A helper function which will get the webview URI of a given file or resource.
@@ -18,4 +19,11 @@ export function getUri(
   pathList: string[]
 ) {
   return webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, ...pathList));
+}
+
+export function getProblemUrl(name: string) {
+  const url =
+    rc.value?.kattis?.problemsurl ??
+    `https://${rc.value?.kattis?.hostname}/problems/`;
+  return url + name;
 }

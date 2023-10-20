@@ -1,5 +1,5 @@
 import { Disposable, Webview, WebviewPanel, type Uri } from "vscode";
-import { getUri } from "../utilities/getUri";
+import { getUri } from "../utilities/uri";
 import { getNonce } from "../utilities/getNonce";
 import vscode = require("vscode");
 const { window, ViewColumn } = vscode;

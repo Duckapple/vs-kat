@@ -6,6 +6,7 @@ import { rc, workspacePath } from "./globals";
 import { Problem } from "./model";
 import fs = require("fs/promises");
 import vscode = require("vscode");
+import { getProblemSub } from "./get/getCommand";
 
 const { commands, workspace, window } = vscode;
 
@@ -71,5 +72,5 @@ export async function activate(context: ExtensionContext) {
   );
 
   // Add command to the extension context
-  context.subscriptions.push(showHelloWorldCommand, tree);
+  context.subscriptions.push(showHelloWorldCommand, tree, getProblemSub);
 }
